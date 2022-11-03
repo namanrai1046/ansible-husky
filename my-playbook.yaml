@@ -43,10 +43,11 @@
       ansible.builtin.shell:
       args:
         chdir: /src/mern-todo/client
-        cmd: npm install 
-        cmd: npm install husky
-        cmd: mkdir .husky 
-        cmd: npx husky add .husky/pre-commit "npm test"
+      shell: |
+        npm install 
+        npm install husky
+        mkdir .husky 
+        npx husky add .husky/pre-commit "npm test"
 
     - name: push all changes.
       git_acp:
