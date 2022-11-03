@@ -1,0 +1,61 @@
+---
+- name: Scheduled Tasks
+  hosts: localhost
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: "Update Repository cache"
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+        force_apt_get: true
+    
+    - name: install nodejs
+      ansible.builtin.shell:
+      args:
+        cmd: curl -sL https://deb.nodesource.com/setup_16.x | sudo bash - 
+        cmd: sudo apt -y install nodejs
+
+    - name: git clone
+      ansible.builtin.shell:
+      args:
+        cmd: git clone https://github.com/namanrai1046/mern-todo-test.git
+
+
+    # - name: clone master branch
+    #   ansible.builtin.git:
+    #     repo: https://github.com/namanrai1046/mern-todo.git
+    #     dest: /src/mern-todo
+    #     single_branch: yes
+    #     version: master
+    #     register: result
+    #     ignore_errors: true
+
+    # - name: Run only if the git clone fails
+    #   ansible.builtin.git:
+    #     repo: https://github.com/namanrai1046/Husky-setup.git
+    #     dest: /src/mern-todo
+    #     refspec: "+refs/pull/*:refs/heads/*"
+    #   when: result is failed
+
+    # husky check
+    - name: Change the working directory and install npm husky
+      ansible.builtin.shell:
+      args:
+        chdir: /src/mern-todo/client
+        cmd: npm install 
+        cmd: npm install husky
+        cmd: mkdir .husky 
+        cmd: npx husky add .husky/pre-commit "npm test"
+
+    - name: push all changes.
+      git_acp:
+        user: namanrai1046
+        token: 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
+        path: /src/mern-todo
+        branch: main
+        comment: husky check
+        add: [ "." ]
+        mode: https
+        url: "https://github.com/namanrai1046/mern-todo.git"
+  
